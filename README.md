@@ -87,6 +87,11 @@ CLI Monitoring:
 
 - **Adapter Voltage Detection**: Current implementation fixes adapter voltage at 20.00V due to missing SMC key in [VirtualSMC documentation](https://github.com/acidanthera/VirtualSMC/blob/master/Docs/SMCKeys.txt). Amperage is calculated using I = P / U. Contributions welcome to identify the correct SMC key.
 
+- **GUI Prototype Limitations**: The current batt GUI (modeled after Aldente Pro) is an early-stage prototype requiring refinement. Specific challenges include:
+  - Real-time voltage measurement accuracy
+  - Power adapter data validation
+  - UI/UX optimization for power management workflows
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 
