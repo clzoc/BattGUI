@@ -1,0 +1,31 @@
+/* 
+  Localizable.strings
+  app
+
+  Created by Cline on [Current Date]. 
+*/
+
+"limit.label" = "Limit:";
+"enable.power.button" = "Enable Power";
+"design.capacity.label" = "Design Capacity";
+"serial.number.label" = "Serial Number";
+"max.capacity.label" = "Max Capacity";
+"cycle.count.label" = "Cycle Count";
+"battery.temperature.label" = "Temperature";
+"battery.level.label" = "Charge";
+"charging.status.label" = "Charging";
+"yes" = "Yes";
+"no" = "No";
+"battery.power.label" = "Battery Power";
+"battery.amperage.label" = "Battery Current";
+"battery.voltage.label" = "Battery Voltage";
+"system.load.label" = "System Load";
+"adapter.input.power.label" = "Adapter Power";
+"adapter.input.amperage.label" = "Adapter Current";
+"adapter.input.voltage.label" = "Adapter Voltage";
+// Error messages (optional, might not be user-facing)
+"executable.not.found.error" = "Executable file not found";
+"cannot.set.charge.limit.error" = "Cannot set charge limit";
+"execution.failed.error" = "Execution failed: %@"; // %@ is placeholder for error
+"initial.limit.distance.failed.error" = "Failed to set initial limit distance: %@";
+"initial.limit.failed.error" = "Failed to set initial limit: %@";

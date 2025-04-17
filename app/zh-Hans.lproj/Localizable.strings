@@ -1,0 +1,31 @@
+/* 
+  Localizable.strings
+  app
+
+  Created by Cline on [Current Date]. 
+*/
+
+"limit.label" = "限制：";
+"enable.power.button" = "启用电源";
+"design.capacity.label" = "设计容量";
+"serial.number.label" = "序列号";
+"max.capacity.label" = "最大容量";
+"cycle.count.label" = "循环次数";
+"battery.temperature.label" = "电池温度";
+"battery.level.label" = "电量";
+"charging.status.label" = "正在充电";
+"yes" = "是";
+"no" = "否";
+"battery.power.label" = "电池功率";
+"battery.amperage.label" = "电池电流";
+"battery.voltage.label" = "电池电压";
+"system.load.label" = "系统负载";
+"adapter.input.power.label" = "电源适配器功率";
+"adapter.input.amperage.label" = "电源适配器电流";
+"adapter.input.voltage.label" = "电源适配器电压";
+// Error messages (optional, might not be user-facing)
+"executable.not.found.error" = "可执行文件未找到";
+"cannot.set.charge.limit.error" = "无法设置充电限制";
+"execution.failed.error" = "执行失败: %@";
+"initial.limit.distance.failed.error" = "执行初始限距失败: %@";
+"initial.limit.failed.error" = "执行初始限制失败: %@";
