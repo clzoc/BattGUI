@@ -46,6 +46,9 @@ graph TD
 - `power_info`: Low-level SMC access for power metrics
 - `batt`: Advanced battery diagnostics (from [charlie0129/batt](https://github.com/charlie0129/batt))
 
+- 'power_info' cli call is replaced by directly invoke in Battery.swift and powerInfo.m
+- 'batt' cli call is replaced by Unix Domain Socket IPC method via Curl
+
 ## Requirements
 
 - macOS 13 Ventura or newer
