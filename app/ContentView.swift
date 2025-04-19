@@ -23,6 +23,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     // State for battery info and UI controls
@@ -32,6 +33,9 @@ struct ContentView: View {
     @State private var iconwidth: CGFloat = 15
     @State private var debounceTask: Task<Void, Never>?
 
+    private func quitApp() {
+        NSApplication.shared.terminate(nil)
+    }
 
     var body: some View {
         // Restore original VStack structure
@@ -62,7 +66,7 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
+                    Button(action: { quitApp() }) {
                         HStack {
                             Image(systemName: "xmark.circle")
                                 .imageScale(.large)
@@ -79,16 +83,17 @@ struct ContentView: View {
                         debounceTask?.cancel()
                         debounceTask = Task.detached(priority: .medium) {
                             try? await Task.sleep(nanoseconds: 000_000_000) // 500ms
-                            guard let battURL = Bundle.main.url(forResource: "batt", withExtension: nil) else {
-                                // Localized fatalError
-                                fatalError(NSLocalizedString("executable.not.found.error", comment: "Error when batt executable is missing"))
-                            }
+                            //guard let battURL = Bundle.main.url(forResource: "batt", withExtension: nil) else {
+                            //    // Localized fatalError
+                            //    fatalError(NSLocalizedString("executable.not.found.error", comment: "Error when batt executable is missing"))
+                            //}
                             let pr = Process()
                             //pr.launchPath = "/usr/bin/osascript"
                             //pr.arguments = ["-e", "do shell script \"source ~/.zshrc; sudo batt install --allow-non-root-access\" with prompt "安装 daemon 辅助程序需要授权" with administrator privileges"]
                             pr.executableURL = URL(fileURLWithPath: "/bin/zsh")
                             //pr.arguments = ["-c", "source ~/.zshrc; \(battURL.path)
-                            pr.arguments = ["-c", "source ~/.zshrc; \(battURL.path) limit \(await Int(num))"]
+                            //pr.arguments = ["-c", "source ~/.zshrc; \(battURL.path) limit \(await Int(num))"]
+                            pr.arguments = ["-c", "source ~/.zshrc; curl -Lv --unix-socket /var/run/batt.sock -XPUT http://localhost/limit --data \(await Int(num))"]
                             let pi = Pipe()
                             pr.standardOutput = pi
                             pr.standardError = pi

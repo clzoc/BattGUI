@@ -255,3 +255,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
 }
+
+extension AppDelegate {
+    private func setupQuitMenuItem() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        mainMenu.addItem(appMenuItem)
+
+        let appMenu = NSMenu()
+        let quitMenuItem = NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenu.addItem(quitMenuItem)
+
+        appMenuItem.submenu = appMenu
+        NSApplication.shared.mainMenu = mainMenu
+    }
+}

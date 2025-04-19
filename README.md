@@ -92,6 +92,8 @@ CLI Monitoring:
   - Power adapter data validation
   - UI/UX optimization for power management workflows
 
+- **Command+Q not quitting when popover is visible**: When the application is activated via the status bar icon and the popover window is displayed, the standard Command+Q shortcut does not quit the application. This is likely due to the popover being a non-activating panel, preventing the application from becoming the key application to handle the shortcut. An attempt to fix this using a global event monitor was unsuccessful. Further investigation and alternative solutions are needed.
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 
