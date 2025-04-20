@@ -20,21 +20,38 @@ A comprehensive power monitoring solution for macOS featuring:
 
 ```mermaid
 graph TD
-    A[Power Management Suite] --> B{GUI Application}
-    A --> C{CLI Tools}
+    Suite[Power Management Suite] --> GUI{GUI Application}
+    Suite --> CLI{CLI Tools}
     
-    B --> D[PowerFlowView]
-    B --> E[BatteryMonitor]
-    B --> F[SystemStats]
+    GUI --> App[appApp.swift]
+    App --> CV[ContentView.swift]
+    CV --> PFV[PowerFlowView.swift]
+    CV --> BM[Battery.swift]
     
-    C --> G[power_info]
-    C --> H[batt]
+    BM --> OC[powerInfo.m Objective-C Bridge]
+    OC --> SMC["SMC API (System Management Controller)"]
     
-    D --> I[SwiftUI Views]
-    E --> J[IOKit Integration]
-    F --> K[System Load Metrics]
-    G --> L[SMC Access]
-    H --> M[Battery Diagnostics]
+    PFV --> SW["SwiftUI Graphics Pipeline"]
+    App --> SM[StatusBar Menu]
+    SM --> POP["Popover Window (NSHostingView)"]
+    
+    CLI --> PI[power_info]
+    CLI --> BAT[batt]
+    PI --> SMC
+    BAT --> UDS["Unix Domain Socket"]
+    BM -.-> BAT
+    
+    classDef swift fill:#F05138,color:white;
+    classDef objc fill:#4381ff,color:white;
+    classDef system fill:#666,color:white;
+    classDef cli fill:#34a853,color:white;
+    classDef suite fill:#8e44ad,color:white;
+    
+    class Suite suite
+    class App,CV,PFV,BM,SW,SM,POP swift
+    class OC objc
+    class SMC system
+    class PI,BAT,CLI,UDS cli
 ```
 
 ## Features
