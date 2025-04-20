@@ -1,61 +1,61 @@
 {
   "images" : [
     {
-      "filename" : "batt 10.png",
+      "filename" : "a_batt_6.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "batt 8.png",
+      "filename" : "a_batt_5 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "batt 9.png",
+      "filename" : "a_batt_5.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "batt 7.png",
+      "filename" : "a_batt_4.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "batt 6.png",
+      "filename" : "a_batt_3.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "batt 5.png",
+      "filename" : "a_batt_2 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "batt 4.png",
+      "filename" : "a_batt_2.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "batt 3.png",
+      "filename" : "a_batt_1 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "batt 2.png",
+      "filename" : "a_batt_1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "batt 1.png",
+      "filename" : "a_batt_0.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"

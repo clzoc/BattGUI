@@ -11,7 +11,7 @@ A comprehensive power monitoring solution for macOS featuring:
 - 📊 System load statistics collection
 
 - Initial app icon (This icon is open to creative reinterpretation by anyone.)
-![](image/Icon/ChatGPT%20Image%202025年4月20日%2014_47_37.png)
+![](image/Icon/a_batt_0.png)
 
 ![](image/capture0.png)
 ![](image/capture1.png)
