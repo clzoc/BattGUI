@@ -58,12 +58,30 @@ graph TD
 - Xcode 15+
 - Administrative privileges for SMC access
 
-##  Installation
+## Installation
 
-DMG image can be downloaded in Releases, after drag it into your application folder, it is expected to work by simply clicking the icon.
+### DMG Installation
+1. Download the latest `.dmg` package from our [Releases page](https://github.com/yourrepo/releases)
+2. Open the downloaded DMG file
+3. Drag the application to your `Applications` folder
 
+### Manual Installation (From Source)
+1. Build the application:
+```bash
+# Clone repository
+git clone https://github.com/clzoc/BattGUI.git
+cd power-suite
+xcodebuild -workspace app.xcodeproj/project.xcworkspace -scheme app
+```
+
+2. Install required components:
+```bash
+sudo batt install --allow-non-root-access
+```
+
+### Alternative Installation
 1. **GateKeeper Configuration**
-   If you encounter security warnings when running the application:
+   If you encounter security warnings:
    - Go to `System Settings` → `Privacy & Security` → scroll down to `Security`
    - Click "Open Anyway" next to the BattGUI warning
    - Confirm execution in the dialog
@@ -90,6 +108,31 @@ open app/build/Release/app.app
   - Enhanced real-time measurement visualization
   - Historical data trending
   - Customizable power profiles
+
+- **GUI Charge Limit Adjustment Permission Denied**: When attempting to adjust battery charge limit through the GUI, users encounter permission errors depending on installation method.
+
+  ## Affected Components
+  - `powerInfo.m` (Objective-C)
+  - Unix domain socket: `/var/run/batt.sock`
+  - GUI slider control
+
+  ## Symptoms
+  | Installation Method | Behavior | Command |
+  |---------------------|----------|---------|
+  | With `--allow-non-root-access` | ✅ Works correctly | `sudo batt install --allow-non-root-access` |
+  | Default installation | ❌ "Permission denied" error | `sudo batt install` |
+
+  ## Technical Details
+  ### Root Cause
+  The Unix domain socket (`/var/run/batt.sock`) implements strict permission controls:
+  - Default mode: 600 (root-only)
+  - With flag: 666 (world-readable/writable)
+
+  ### Error Reproduction
+  1. Install without special flags
+  2. Launch GUI application
+  3. Attempt to move charge limit slider
+  4. Observe error in system logs:
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
