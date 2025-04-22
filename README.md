@@ -58,18 +58,22 @@ graph TD
 - Xcode 15+
 - Administrative privileges for SMC access
 
-## Installation
+##  Installation
 
+DMG image can be download in Releases, after drag it into your application folder, it is expected to work by simply clicking the icon.
+
+1. **GateKeeper Configuration**
+   If you encounter security warnings when running the application:
+   - Go to `System Settings` → `Privacy & Security` → scroll down to `Security`
+   - Click "Open Anyway" next to the BattGUI warning
+   - Confirm execution in the dialog
+
+2. **Advanced Configuration (Admin required)**
+   For system-level monitoring access:
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/power-suite.git
-cd power-suite
-
-# Build GUI application
-xcodebuild -workspace app.xcodeproj/project.xcworkspace -scheme app
-
+# Temporarily disable GateKeeper (resets after reboot)
+sudo spctl --master-disable
 ```
-
 ## Usage
 
 GUI Application:
