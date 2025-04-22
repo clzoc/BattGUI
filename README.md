@@ -54,6 +54,14 @@ graph TD
     class PI,BAT,CLI,UDS cli
 ```
 
+### Manual installation steps
+1. **GateKeeper Warning Handling**
+    - **Warning Message**: If you have GateKeeper turned on, you might encounter messages like "batt is can't be opened because it was not downloaded from the App Store" or "batt cannot be opened because the developer cannot be verified". If you don't see this warning, you can skip this step.
+    - **Solutions**:
+        - **Recommended**: Go to `System Settings` -> `Privacy & Security` --scroll-down--> `Security` -> `Open Anyway`.
+        - **Alternative**: Run `sudo spctl --master-disable` to disable GateKeeper entirely.
+
+
 ## Features
 
 ### GUI Application
