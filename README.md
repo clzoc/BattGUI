@@ -60,7 +60,7 @@ graph TD
 
 ##  Installation
 
-DMG image can be download in Releases, after drag it into your application folder, it is expected to work by simply clicking the icon.
+DMG image can be downloaded in Releases, after drag it into your application folder, it is expected to work by simply clicking the icon.
 
 1. **GateKeeper Configuration**
    If you encounter security warnings when running the application:
