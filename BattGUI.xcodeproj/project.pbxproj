@@ -24,7 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9DB688042D8E7A53007083F0 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DB688042D8E7A53007083F0 /* BattGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BattGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB688152D8E7A54007083F0 /* appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB6881F2D8E7A54007083F0 /* appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = appUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,7 +85,7 @@
 		9DB688052D8E7A53007083F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9DB688042D8E7A53007083F0 /* app.app */,
+				9DB688042D8E7A53007083F0 /* BattGUI.app */,
 				9DB688152D8E7A54007083F0 /* appTests.xctest */,
 				9DB6881F2D8E7A54007083F0 /* appUITests.xctest */,
 			);
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9DB688032D8E7A53007083F0 /* app */ = {
+		9DB688032D8E7A53007083F0 /* BattGUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9DB688292D8E7A54007083F0 /* Build configuration list for PBXNativeTarget "app" */;
+			buildConfigurationList = 9DB688292D8E7A54007083F0 /* Build configuration list for PBXNativeTarget "BattGUI" */;
 			buildPhases = (
 				9DB688002D8E7A53007083F0 /* Sources */,
 				9DB688012D8E7A53007083F0 /* Frameworks */,
@@ -110,11 +110,11 @@
 			fileSystemSynchronizedGroups = (
 				9DB688062D8E7A53007083F0 /* app */,
 			);
-			name = app;
+			name = BattGUI;
 			packageProductDependencies = (
 			);
 			productName = app;
-			productReference = 9DB688042D8E7A53007083F0 /* app.app */;
+			productReference = 9DB688042D8E7A53007083F0 /* BattGUI.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9DB688142D8E7A54007083F0 /* appTests */ = {
@@ -187,7 +187,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9DB687FF2D8E7A53007083F0 /* Build configuration list for PBXProject "app" */;
+			buildConfigurationList = 9DB687FF2D8E7A53007083F0 /* Build configuration list for PBXProject "BattGUI" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -202,7 +202,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9DB688032D8E7A53007083F0 /* app */,
+				9DB688032D8E7A53007083F0 /* BattGUI */,
 				9DB688142D8E7A54007083F0 /* appTests */,
 				9DB6881E2D8E7A54007083F0 /* appUITests */,
 			);
@@ -260,12 +260,12 @@
 /* Begin PBXTargetDependency section */
 		9DB688172D8E7A54007083F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9DB688032D8E7A53007083F0 /* app */;
+			target = 9DB688032D8E7A53007083F0 /* BattGUI */;
 			targetProxy = 9DB688162D8E7A54007083F0 /* PBXContainerItemProxy */;
 		};
 		9DB688212D8E7A54007083F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9DB688032D8E7A53007083F0 /* app */;
+			target = 9DB688032D8E7A53007083F0 /* BattGUI */;
 			targetProxy = 9DB688202D8E7A54007083F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -398,6 +398,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -431,6 +432,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -527,7 +529,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9DB687FF2D8E7A53007083F0 /* Build configuration list for PBXProject "app" */ = {
+		9DB687FF2D8E7A53007083F0 /* Build configuration list for PBXProject "BattGUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9DB688272D8E7A54007083F0 /* Debug */,
@@ -536,7 +538,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9DB688292D8E7A54007083F0 /* Build configuration list for PBXNativeTarget "app" */ = {
+		9DB688292D8E7A54007083F0 /* Build configuration list for PBXNativeTarget "BattGUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9DB6882A2D8E7A54007083F0 /* Debug */,

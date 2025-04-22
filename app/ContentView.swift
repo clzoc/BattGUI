@@ -32,6 +32,7 @@ struct ContentView: View {
     @State private var num: Float = 70
     @State private var iconwidth: CGFloat = 15
     @State private var debounceTask: Task<Void, Never>?
+    private let socketPath = "/var/run/batt.sock" // Define socket path constant
 
     private func quitApp() {
         NSApplication.shared.terminate(nil)
@@ -54,17 +55,17 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
-                        HStack {
-                            // Localized Text and flexible frame
-                            Text(LocalizedStringKey("enable.power.button")).font(.system(size: 13)).bold()
-                        }.frame(minWidth: 70, idealWidth: 90, maxWidth: .infinity, minHeight: 30).background( // Use minWidth
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(.ultraThickMaterial) // Changed to transparent
-                        )
-                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0)).buttonStyle(PlainButtonStyle())
-                    
-                    Spacer()
+//                    Button(action: {}) {
+//                        HStack {
+//                            // Localized Text and flexible frame
+//                            Text(LocalizedStringKey("enable.power.button")).font(.system(size: 13)).bold()
+//                        }.frame(minWidth: 70, idealWidth: 90, maxWidth: .infinity, minHeight: 30).background( // Use minWidth
+//                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+//                                .fill(.ultraThickMaterial) // Changed to transparent
+//                        )
+//                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0)).buttonStyle(PlainButtonStyle())
+//                    
+//                    Spacer()
                     
                     Button(action: { quitApp() }) {
                         HStack {
@@ -81,38 +82,39 @@ struct ContentView: View {
                 Slider(value: $num, in: 10...99, onEditingChanged: {editing in
                     if !editing {
                         debounceTask?.cancel()
-                        debounceTask = Task.detached(priority: .medium) {
-                            try? await Task.sleep(nanoseconds: 000_000_000) // 500ms
-                            //guard let battURL = Bundle.main.url(forResource: "batt", withExtension: nil) else {
-                            //    // Localized fatalError
-                            //    fatalError(NSLocalizedString("executable.not.found.error", comment: "Error when batt executable is missing"))
-                            //}
-                            let pr = Process()
-                            //pr.launchPath = "/usr/bin/osascript"
-                            //pr.arguments = ["-e", "do shell script \"source ~/.zshrc; sudo batt install --allow-non-root-access\" with prompt "安装 daemon 辅助程序需要授权" with administrator privileges"]
-                            pr.executableURL = URL(fileURLWithPath: "/bin/zsh")
-                            //pr.arguments = ["-c", "source ~/.zshrc; \(battURL.path)
-                            //pr.arguments = ["-c", "source ~/.zshrc; \(battURL.path) limit \(await Int(num))"]
-                            pr.arguments = ["-c", "source ~/.zshrc; curl -Lv --unix-socket /var/run/batt.sock -XPUT http://localhost/limit --data \(await Int(num))"]
-                            let pi = Pipe()
-                            pr.standardOutput = pi
-                            pr.standardError = pi
+                        // Use Task for background execution, no need for .detached unless specific priority is crucial
+                        debounceTask = Task {
+                            // Define error pointer for C function
+                            var nsError: NSError?
                             
-                            do {
-                                try pr.run()
-                                pr.waitUntilExit()
-                                let dt = pi.fileHandleForReading.readDataToEndOfFile()
-                                let re = String(data: dt, encoding: .utf8) ?? ""
-                                if let _ = extractSet(from: re) {
-                                    //print(sn)
+                            // Call the C function with the defined path as a C string
+                            let result = sendCommandToUnixSocket(Int(num), socketPath.cString(using: .utf8)!, &nsError)
+                            
+                            // Switch back to the main thread to handle UI or print logs
+                            await MainActor.run {
+                                if let error = nsError {
+                                    // An error occurred during the socket operation
+                                    // Use localized string with formatting
+                                    print(String(format: NSLocalizedString("socket.command.failed.error", comment: "Error message when socket command fails"), error.localizedDescription))
+                                    // TODO: Add UI feedback for the error (e.g., show an alert)
+                                } else if let response = result {
+                                    // Successfully sent command and got response
+                                    print("Socket command successful. Response: \(response)")
+                                    // Optional: Parse response using extractSet(from: response) if needed
+                                    if let limitSet = extractSet(from: response) {
+                                        print("Successfully set limit to \(limitSet)%")
+                                        // TODO: Add UI feedback for success if desired
+                                    } else {
+                                        // Use localized string if available, otherwise generic message
+                                        // Consider adding a specific localized string for this case
+                                        print(NSLocalizedString("limit.set.confirmation.parse.error", comment: "Could not parse confirmation from daemon response: \(response)"))
+                                        // TODO: Add UI feedback for parsing failure if desired
+                                    }
                                 } else {
-                                    // Localized print
-                                    print(NSLocalizedString("cannot.set.charge.limit.error", comment: "Error message when setting charge limit fails"))
+                                    // Should not happen if ObjC code is correct and no error is set, but handle defensively
+                                    print(NSLocalizedString("socket.command.unknown.error", comment: "Unknown error during socket command"))
+                                    // TODO: Add UI feedback for this unexpected case
                                 }
-                                
-                            } catch {
-                                // Localized print with formatting
-                                print(String(format: NSLocalizedString("execution.failed.error", comment: "Generic execution failure message"), error.localizedDescription))
                             }
                         }
                     }
@@ -193,13 +195,13 @@ struct ContentView: View {
                     Image(systemName: Icons.iconLight).frame(width: iconwidth, alignment: .center)
                     Text(LocalizedStringKey("battery.power.label")).font(.system(size: 13)).bold() // Localized
                     Spacer()
-                    Text(String(format: "%.2f", batteryManager.batteryPower) + " W").font(.system(size: 13)).frame(alignment: .trailing)
+                    Text(String(format: "%.2f", batteryManager.batteryPower < 0 ? batteryManager.batteryPower * -1 : batteryManager.batteryPower) + " W").font(.system(size: 13)).frame(alignment: .trailing)
                 }).padding(EdgeInsets(top: 0, leading: 15, bottom: 1, trailing: 15))
                 HStack(content: {
                     Image(systemName: Icons.normLight).frame(width: iconwidth, alignment: .center)
                     Text(LocalizedStringKey("battery.amperage.label")).font(.system(size: 13)).bold() // Localized
                     Spacer()
-                    Text(String(format: "%.3f", batteryManager.batteryAmperage) + " A").font(.system(size: 13)).frame(alignment: .trailing)
+                    Text(String(format: "%.3f", batteryManager.batteryAmperage < 0 ? batteryManager.batteryAmperage * -1 : batteryManager.batteryAmperage) + " A").font(.system(size: 13)).frame(alignment: .trailing)
                 }).padding(EdgeInsets(top: 0, leading: 15, bottom: 1, trailing: 15))
                 HStack(content: {
                     Image(systemName: Icons.slash).frame(width: iconwidth, alignment: .center)

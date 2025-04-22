@@ -77,7 +77,7 @@ struct PowerFlowView: View {
     var body: some View {
         HStack(spacing: spacing) {
             VStack(alignment: .leading, spacing: flowHeight, content: {
-                if inputPower > 0 {
+                if inputPower > 0.01 {
                     ZStack {
                         // corners: [TL, TR, BR, BL]
                         generateSquircle(width: iconSize + 20, height: batteryPower > 0 ? flowHeight * 1.5 : flowHeight, radius: cornerRadius, corners: [true, false, false, true])
@@ -106,7 +106,7 @@ struct PowerFlowView: View {
             
             // Middle Flow Section - Measure width using PreferenceKey
             Group {
-                if inputPower > 0 {
+                if inputPower > 0.01 {
                     if batteryPower == 0 {
                         ZStack {
                             ZStack(alignment: .leading, content: {
@@ -300,7 +300,7 @@ struct PowerFlowView: View {
                 // System Load Icon (Laptop)
                 ZStack {
                     // corners: [TL, TR, BR, BL]
-                    generateSquircle(width: iconSize + 20, height: (batteryPower < 0 && inputPower > 0) ? flowHeight * 1.5 : flowHeight, radius: cornerRadius, corners: [false, true, true, false])
+                    generateSquircle(width: iconSize + 20, height: (batteryPower < 0 && inputPower > 0.01) ? flowHeight * 1.5 : flowHeight, radius: cornerRadius, corners: [false, true, true, false])
                         .fill(.ultraThickMaterial)
                     
                     Image(systemName: "laptopcomputer")
@@ -308,7 +308,7 @@ struct PowerFlowView: View {
                         .foregroundColor(animateLoad ? Color.blue : Color.black)
                         .offset(x: -1, y: 0)
                 }
-                .frame(width: iconSize + 20, height: (batteryPower < 0 && inputPower > 0) ? flowHeight * 1.5 : flowHeight) // Apply frame to the ZStack
+                .frame(width: iconSize + 20, height: (batteryPower < 0 && inputPower > 0.01) ? flowHeight * 1.5 : flowHeight) // Apply frame to the ZStack
             }).frame(width: iconSize + 20)
             
         }

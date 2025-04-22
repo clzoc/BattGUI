@@ -170,7 +170,7 @@ BOOL getSMCSInt8Value(uint32_t key, int8_t* outValue) {
             
             result = IOConnectCallStructMethod(conn, 2, &inStruct, sizeof(AppleSMCData_Int16), &outStruct, &outStructSize);
             IOServiceClose(conn);
-
+            
             if (result == kIOReturnSuccess) {
                 // Value is in the lower byte of outStruct.value
                 *outValue = (int8_t)(outStruct.value & 0xFF);
@@ -379,7 +379,7 @@ float getAdapterVoltage(void) {
     }
 
     uint16_t voltage_mV = 0;
-    float voltage_V = -1.0f; // Indicate failure
+    float voltage_V = 0.0f; // Indicate failure
     // Construct key dynamically: D<port>VR
     uint32_t voltageKey = ('D' << 24) + ((uint32_t)('0' + activePort) << 16) + ('V' << 8) + 'R';
     
@@ -395,11 +395,11 @@ float getAdapterAmperage(void) {
     float power = getAdapterPower(); // Get real-time power (PDTR)
     float voltage = getAdapterVoltage(); // Get reported voltage (D<port>VR)
     
-    float current_A = -1.0f; // Indicate failure
+    float current_A = 0.000f; // Indicate failure
 
     // Check if both readings were likely successful and voltage is usable
     // Use PDTR / D<port>VR as D<port>IR seems to report max rated current, not real-time.
-    if (power >= 0 && voltage > 0.1f) { // Allow power to be 0
+    if (power >= 0 && voltage > 0.01f) { // Allow power to be 0
         current_A = power / voltage; // Calculate Amps = Watts / Volts
     }
     
@@ -407,11 +407,11 @@ float getAdapterAmperage(void) {
 }
 
 float getBatteryVoltage(void) {
-    float bv = 1.0f;
+    float bv = 0.00f;
     
     uint16_t batteryVoltage_mV = 0;
     BOOL batteryVoltageSuccess = getSMCUInt16Value(('B' << 24) + ('0' << 16) + ('A' << 8) + 'V', &batteryVoltage_mV);
-
+    
     if (batteryVoltageSuccess) {
         bv = (float) batteryVoltage_mV / 1000;
     }
@@ -419,7 +419,7 @@ float getBatteryVoltage(void) {
 }
 
 float getBatteryAmperage(void) {
-    float ba = 1.0f;
+    float ba = 0.000f;
     
     int16_t batteryAmperage_mA = 0;
     BOOL batteryAmperageSuccess = getSMCSInt16Value(('B' << 24) + ('0' << 16) + ('A' << 8) + 'C', &batteryAmperage_mA);
@@ -431,8 +431,12 @@ float getBatteryAmperage(void) {
 }
 
 float getBatteryPower(void) {
-    float bp = 1.0f;
+    float bp = 0.00f;
     bp = getBatteryVoltage() * getBatteryAmperage();
+    //NSString *s = getChargingStatus()
+//    if (s == "Idle") {
+//        bp = bp * -1;
+//    }
     return bp;
 }
 
@@ -445,4 +449,144 @@ NSString* getChargingStatus(void) {
         myString = @"Idle";
     }
     return myString;
+}
+
+#import "powerInfo.h"
+#import <sys/socket.h>
+#import <sys/un.h>
+#import <errno.h> // For errno
+
+// Define an error domain for our custom errors
+NSString * const PowerInfoErrorDomain = @"com.yourcompany.BattGUI.PowerInfoErrorDomain"; // Replace with your actual domain
+
+// Implementation for sending command to Unix domain socket
+NSString * _Nullable sendCommandToUnixSocket(NSInteger value, const char * _Nonnull socketPath, NSError * _Nullable * _Nullable error) {
+    // Declare all variables at the top to avoid goto issues
+    int sockfd = -1;
+    struct sockaddr_un addr;
+    char buffer[1024];
+    ssize_t bytesSent = 0; // Initialize to avoid potential uninitialized reads if goto happens early
+    ssize_t bytesRead = 0;
+    NSString *responseString = nil;
+    NSError *localError = nil;
+    NSString *valueString = nil;
+    NSString *requestBody = nil;
+    NSString *requestString = nil;
+    const char *requestBytes = NULL;
+    size_t requestLength = 0;
+    NSMutableData *responseData = nil; // Initialize later
+
+    // 1. Create Socket
+    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sockfd == -1) {
+        localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                         code:errno // Use POSIX error code
+                                     userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to create socket: %s", strerror(errno)]}];
+        perror("socket error");
+        goto cleanup; // Use goto for centralized cleanup
+    }
+
+    // 2. Set up Address Structure
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    if (strlen(socketPath) >= sizeof(addr.sun_path)) {
+         localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                          code:ENAMETOOLONG
+                                      userInfo:@{NSLocalizedDescriptionKey: @"Socket path is too long."}];
+        goto cleanup;
+    }
+    strncpy(addr.sun_path, socketPath, sizeof(addr.sun_path) - 1);
+
+    // 3. Connect to Socket
+    if (connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+        localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                         code:errno
+                                     userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to connect to socket '%s': %s", socketPath, strerror(errno)]}];
+        perror("connect error");
+        goto cleanup;
+    }
+
+    // 4. Construct HTTP PUT Request
+    valueString = [NSString stringWithFormat:@"%ld", (long)value]; // Assign here
+    requestBody = valueString; // Assign here
+    requestString = [NSString stringWithFormat: // Assign here
+                               @"PUT /limit HTTP/1.1\r\n"
+                               @"Host: localhost\r\n"
+                               @"Content-Type: text/plain\r\n" // Assuming plain text is okay
+                               @"Content-Length: %lu\r\n"
+                               @"Connection: close\r\n" // Close connection after response
+                               @"\r\n"
+                               @"%@",
+                               (unsigned long)[requestBody length], requestBody]; // Corrected argument order
+
+    requestBytes = [requestString UTF8String]; // Assign here
+    requestLength = strlen(requestBytes); // Assign here
+
+    // 5. Send Request
+    bytesSent = write(sockfd, requestBytes, requestLength);
+    if (bytesSent == -1) {
+        localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                         code:errno
+                                      userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to write to socket: %s", strerror(errno)]}];
+        perror("write error");
+        goto cleanup;
+    }
+    if (bytesSent < requestLength) {
+        localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                         code:EIO // Generic I/O error
+                                      userInfo:@{NSLocalizedDescriptionKey: @"Partial write to socket."}];
+        fprintf(stderr, "Partial write to socket\n");
+        goto cleanup;
+    }
+
+    // 6. Read Response
+    responseData = [NSMutableData data]; // Initialize here
+    while ((bytesRead = read(sockfd, buffer, sizeof(buffer) - 1)) > 0) {
+        // buffer[bytesRead] = '\0'; // Null-termination not needed for appending data
+        [responseData appendBytes:buffer length:bytesRead];
+    }
+
+    if (bytesRead == -1) {
+        // Read error might occur if server closes connection immediately. Check errno.
+        // EAGAIN/EWOULDBLOCK are not expected for blocking sockets.
+        // ECONNRESET might be okay if data was received before reset.
+        if (errno != ECONNRESET || [responseData length] == 0) {
+             localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                              code:errno
+                                          userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to read from socket: %s", strerror(errno)]}];
+            perror("read error");
+            goto cleanup;
+        }
+        // If ECONNRESET and we got data, proceed.
+        perror("read warning (ECONNRESET after receiving data)");
+    }
+
+    // Convert response data to string
+    if ([responseData length] > 0) {
+        responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+        if (!responseString) {
+            localError = [NSError errorWithDomain:PowerInfoErrorDomain
+                                             code:NSPropertyListReadCorruptError // Or a more specific encoding error code
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Failed to decode response data as UTF-8."}];
+             fprintf(stderr, "Failed to decode response as UTF-8\n");
+             // Fall through to cleanup, responseString is already nil
+        }
+    } else {
+        // No data read, assume success with empty response if no other error occurred.
+        responseString = @"";
+    }
+
+cleanup:
+    // 7. Close Socket if it was opened
+    if (sockfd != -1) {
+        close(sockfd);
+    }
+
+    // 8. Assign error if pointer provided and localError exists
+    if (error && localError) {
+        *error = localError;
+    }
+
+    // Return nil if an error occurred, otherwise the response string
+    return (localError == nil) ? responseString : nil;
 }

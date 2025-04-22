@@ -75,6 +75,14 @@ class BatteryInfoManager: ObservableObject {
     // captures their output, and then calls `parseBatteryInfo` on the main thread
     // to update the published properties.
     func updateBatteryInfo() {
+        loadwatt = Double(getRawSystemPower())
+        inputwatt = Double(getAdapterPower())
+        amperage = Double(getAdapterAmperage())
+        voltage = Double(getAdapterVoltage())
+        batteryVoltage = Double(getBatteryVoltage())
+        batteryAmperage = Double(getBatteryAmperage())
+        batteryPower = Double(getBatteryPower())
+        isCharging = getChargingStatus().contains("Charging")
         Task {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/bin/zsh")
@@ -97,15 +105,6 @@ class BatteryInfoManager: ObservableObject {
     
     @MainActor
     private func parseBatteryInfo(from output: String) {
-        loadwatt = Double(getRawSystemPower())
-        inputwatt = Double(getAdapterPower())
-        amperage = Double(getAdapterAmperage())
-        voltage = Double(getAdapterVoltage())
-        batteryVoltage = Double(getBatteryVoltage())
-        batteryAmperage = Double(getBatteryAmperage())
-        batteryPower = Double(getBatteryPower())
-        isCharging = getChargingStatus().contains("Charging")
-        
         // --- Parse Temperature (ioreg - VirtualTemperature seems more reliable than power_info's) ---
         if let match = output.range(of: "\"VirtualTemperature\" = ([0-9]+)", options: .regularExpression) {
             let valueStr = String(output[match]).components(separatedBy: "=").last?.trimmingCharacters(in: .whitespaces) ?? "0"
