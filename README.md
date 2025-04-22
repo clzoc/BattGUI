@@ -12,9 +12,9 @@ A comprehensive power monitoring solution for macOS featuring:
 
 - Initial app icon (This icon is open to creative reinterpretation by anyone.)
 
-![](image/Icon/a_batt_0.png)
-![](image/capture0.png)
-![](image/capture1.png)
+<img src="image/Icon/a_batt_0.png" alt="Initial app icon" height="200">
+<img src="image/capture0.png" alt="Capture 0" height="200">
+<img src="image/capture1.png" alt="Capture 1" height="200">
 
 ## Architecture Overview
 
