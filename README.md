@@ -35,7 +35,6 @@ graph TD
     
     CLI --> PI[power_info]
     CLI --> BAT[batt]
-    PI --> SMC
     BAT --> UDS["Unix Domain Socket"]
     BM -.-> BAT
     
