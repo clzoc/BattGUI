@@ -61,7 +61,7 @@ graph TD
 ## Installation
 
 ### DMG Installation
-1. Download the latest `.dmg` package from our [Releases page](https://github.com/yourrepo/releases)
+1. Download the latest `.dmg` package from our [Releases page](https://github.com/clzoc/BattGUI/releases)
 2. Open the downloaded DMG file
 3. Drag the application to your `Applications` folder
 
